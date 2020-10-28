@@ -44,6 +44,17 @@ public:
     }
 };
 
+class Jumpy {
+    int y = 1;
+    char shape[3] = { '\\', 'M', 'O' };
+
+public:
+    void draw(void) {
+        for (int i = 0; i < 3; i++) 
+            mvaddch(LINES - y - i - 1, 2, shape[i]);
+    }
+};
+
 int main() {
   // Set up ncurses.
   initscr();
@@ -54,6 +65,7 @@ int main() {
 
   // Initialize game state.
   auto floor = Floor();
+  auto jumpy = Jumpy();
 
   // Game loop.
   while (true) {
@@ -62,6 +74,7 @@ int main() {
 
       // Show the current game state.
       floor.draw();
+      jumpy.draw();
       refresh();
 
       // Wait a bit.
