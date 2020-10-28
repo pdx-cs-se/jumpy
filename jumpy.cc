@@ -3,6 +3,7 @@
 // In-class Game Jam 2020: Theme "cursed"
 
 #include <chrono>
+#include <cstring>
 #include <random>
 #include <string>
 #include <thread>
@@ -11,9 +12,6 @@
 #include <ncurses.h>
 
 using namespace std;
-
-// Frame rate in frames per second.
-const int FRAME_RATE = 30;
 
 // Jump velocity in chars per frame.
 const float JUMP_VEL = 1.5;
@@ -110,7 +108,10 @@ public:
     }
 };
 
-int main() {
+int main(int argc, char* argv[]) {
+  int frameRate = 30;
+  if (argc > 1 && strcmp(argv[1], "Dark Souls"))
+    frameRate = 60;
   // Set up ncurses.
   initscr();
   clear();
@@ -145,7 +146,7 @@ int main() {
       refresh();
 
       // Wait a bit.
-      auto delay_time = chrono::milliseconds(1000 / FRAME_RATE);
+      auto delay_time = chrono::milliseconds(1000 / frameRate);
       this_thread::sleep_for(delay_time);
   }
 
