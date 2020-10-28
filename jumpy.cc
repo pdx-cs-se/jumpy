@@ -15,6 +15,12 @@ using namespace std;
 // Frame rate in frames per second.
 const int FRAME_RATE = 30;
 
+// Jump velocity in chars per frame.
+const float JUMP_VEL = 1.5;
+
+// Jump deceleration in chars per frame per frame.
+const float JUMP_DECEL = 0.2;
+
 // Draw the floor.
 class Floor {
     vector<char> tiles;
@@ -48,16 +54,39 @@ public:
 };
 
 class Jumpy {
-    int y = 1;
+    // Jumpy's current y velocity.
+    float vel_y = 0.0;
+    // Jumpy's current y position.
+    float pos_y = 1.0;
     char shape[3] = { '\\', 'M', 'O' };
 
 public:
     // XXX Jumpy should be drawn last so that the cursor
     // ends up over their body.
     void draw(void) {
+        int y = floor(pos_y + 0.5);
         for (int i = 0; i < 3; i++) 
             mvaddch(LINES - y - i - 1, 2, shape[i]);
         move(LINES - y - 2, 2);
+    }
+
+    void update(void) {
+        pos_y += vel_y;
+        if (pos_y <= 1.0) {
+            pos_y = 1.0;
+            vel_y = 0.0;
+            return;
+        }
+        vel_y -= JUMP_DECEL;
+    }
+
+    void jump(void) {
+        // No double jumps.
+        // XXX Should let clipping take care of this.
+        if (pos_y > 1.0)
+            return;
+        
+        vel_y = JUMP_VEL;
     }
 };
 
@@ -68,6 +97,7 @@ int main() {
   noecho();
   cbreak();
   keypad(stdscr, true);
+  nodelay(stdscr, true);
 
   // Initialize game state.
   auto floor = Floor();
@@ -75,10 +105,19 @@ int main() {
 
   // Game loop.
   while (true) {
+      // Process keypresses.
+      switch (getch()) {
+      case ' ':
+          jumpy.jump();
+          break;
+      }
+
       // Update the current game state.
       floor.update();
+      jumpy.update();
 
       // Show the current game state.
+      erase();
       floor.draw();
       jumpy.draw();
       refresh();
