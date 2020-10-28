@@ -9,6 +9,12 @@
 
 using namespace std;
 
+// Draw the floor.
+void draw_floor(void) {
+  for (int col = 0; col < COLS; col++)
+      mvaddch(LINES - 1, col, '#');
+}
+
 int main() {
   // Set up ncurses.
   initscr();
@@ -17,14 +23,14 @@ int main() {
   cbreak();
   keypad(stdscr, true);
 
-  // Draw the floor.
-  for (int col = 0; col < COLS; col++)
-      mvaddch(LINES - 1, col, '#');
-  refresh();
+  while (true) {
+      draw_floor();
+      refresh();
 
-  // Wait a bit.
-  auto delay_time = chrono::seconds(3);
-  this_thread::sleep_for(delay_time);
+      // Wait a bit.
+      auto delay_time = chrono::milliseconds(30);
+      this_thread::sleep_for(delay_time);
+  }
 
   // Clean up.
   endwin();
