@@ -24,6 +24,8 @@ const float JUMP_DECEL = 0.2;
 // PRNG.
 default_random_engine generator;
 
+class GameState;
+
 // Draw the floor.
 class Floor {
     vector<char> tiles;
@@ -50,7 +52,7 @@ public:
     }
 
     // Returns true on game over.
-    bool update(void) {
+    bool update(GameState &state) {
         for (int col = 0; col < COLS - 1; col++)
             tiles[col] = tiles[col + 1];
         static uniform_real_distribution<float> distribution;
@@ -85,10 +87,10 @@ public:
 
     // Returns true on game over.
     // XXX Needs more principled state sharing.
-    bool update(Floor &floor) {
+    bool update(GameState &state) {
         pos_y += vel_y;
         if (pos_y <= 1.0) {
-            if (floor.on_space()) {
+            if (state.floor.on_space()) {
                 pos_y = 0.0;
                 return true;
             }
@@ -110,6 +112,26 @@ public:
     }
 };
 
+class GameState {
+    Floor floor;
+
+public:
+    Jumpy jumpy;
+    bool update();
+    void draw();
+};
+
+bool GameState::update() {
+    if (floor.update(*this))
+        return true;
+    return jumpy.update(*this);
+}
+
+void GameState::draw() {
+    floor.draw();
+    jumpy.draw();
+}
+
 int main() {
   // Set up ncurses.
   initscr();
@@ -120,28 +142,24 @@ int main() {
   nodelay(stdscr, true);
 
   // Initialize game state.
-  auto floor = Floor();
-  auto jumpy = Jumpy();
+  GameState state;
 
   // Game loop.
   while (true) {
       // Process keypresses.
       switch (getch()) {
       case ' ':
-          jumpy.jump();
+          state.jumpy.jump();
           break;
       }
 
       // Update the current game state.
-      bool floor_fail = floor.update();
-      bool jumpy_fail = jumpy.update(floor);
-      if (floor_fail || jumpy_fail)
+      if (state.update())
           break;
 
       // Show the current game state.
       erase();
-      floor.draw();
-      jumpy.draw();
+      state.draw();
       refresh();
 
       // Wait a bit.
