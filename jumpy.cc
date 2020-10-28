@@ -52,9 +52,12 @@ class Jumpy {
     char shape[3] = { '\\', 'M', 'O' };
 
 public:
+    // XXX Jumpy should be drawn last so that the cursor
+    // ends up over their body.
     void draw(void) {
         for (int i = 0; i < 3; i++) 
             mvaddch(LINES - y - i - 1, 2, shape[i]);
+        move(LINES - y - 2, 2);
     }
 };
 
