@@ -12,6 +12,9 @@
 
 using namespace std;
 
+// Frame rate in frames per second.
+const int FRAME_RATE = 30;
+
 // Draw the floor.
 class Floor {
     vector<char> tiles;
@@ -78,7 +81,7 @@ int main() {
       refresh();
 
       // Wait a bit.
-      auto delay_time = chrono::milliseconds(30);
+      auto delay_time = chrono::milliseconds(1000 / FRAME_RATE);
       this_thread::sleep_for(delay_time);
   }
 
