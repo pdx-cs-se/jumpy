@@ -14,5 +14,16 @@ Sample screenshot:
      O
      M
      \
-    @*#O***@##*O#OO@#**##@*#@*#@###**#@***@@O#O@*@*OO@@*@O*@OO@@@*OO#*O@*O@O@OO#@O*#
+    @*#O***@##*O#OO@#**##@*#@*#@###**#@***@ O#O@*@*OO@@*@O*@O @@@*OO#*O@*O@O@OO#@O*#
 
+## Status
+
+Jumpy can jump to avoid holes in the playfield. Things to
+improve:
+
+[ ] Slow game to reasonable rate
+[ ] Variable game speed
+[ ] Variable hole probability
+[ ] Multi-space holes
+[ ] Enemies to jump
+[ ] Platforms
