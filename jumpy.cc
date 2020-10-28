@@ -21,13 +21,16 @@ const float JUMP_VEL = 1.5;
 // Jump deceleration in chars per frame per frame.
 const float JUMP_DECEL = 0.2;
 
+// PRNG.
+default_random_engine generator;
+
 // Draw the floor.
 class Floor {
     vector<char> tiles;
+    float hole_prob = 0.01;
 
     static char floor_tile(void) {
         static string terrain = "#*O@";
-        static default_random_engine generator;
         static uniform_int_distribution<int>
             distribution(0, terrain.length() - 1);
         int terrain_index = distribution(generator);
@@ -46,10 +49,20 @@ public:
             mvaddch(LINES - 1, col, tiles[col]);
     }
 
-    void update(void) {
+    // Returns true on game over.
+    bool update(void) {
         for (int col = 0; col < COLS - 1; col++)
             tiles[col] = tiles[col + 1];
-        tiles[COLS - 1] = floor_tile();
+        static uniform_real_distribution<float> distribution;
+        if (distribution(generator) <= hole_prob)
+            tiles[COLS - 1] = ' ';
+        else
+            tiles[COLS - 1] = floor_tile();
+        return false;
+    }
+
+    bool on_space(void) {
+        return tiles[1] == ' ';
     }
 };
 
@@ -70,14 +83,21 @@ public:
         move(LINES - y - 2, 2);
     }
 
-    void update(void) {
+    // Returns true on game over.
+    // XXX Needs more principled state sharing.
+    bool update(Floor &floor) {
         pos_y += vel_y;
         if (pos_y <= 1.0) {
+            if (floor.on_space()) {
+                pos_y = 0.0;
+                return true;
+            }
             pos_y = 1.0;
             vel_y = 0.0;
-            return;
+            return false;
         }
         vel_y -= JUMP_DECEL;
+        return false;
     }
 
     void jump(void) {
@@ -113,8 +133,10 @@ int main() {
       }
 
       // Update the current game state.
-      floor.update();
-      jumpy.update();
+      bool floor_fail = floor.update();
+      bool jumpy_fail = jumpy.update(floor);
+      if (floor_fail || jumpy_fail)
+          break;
 
       // Show the current game state.
       erase();
@@ -128,6 +150,9 @@ int main() {
   }
 
   // Clean up.
+  refresh();
+  auto delay_time = chrono::seconds(5);
+  this_thread::sleep_for(delay_time);
   endwin();
   return 0;
 }
