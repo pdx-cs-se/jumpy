@@ -16,7 +16,17 @@ int main() {
   noecho();
   cbreak();
   keypad(stdscr, true);
-  // XXX Game code goes here.
+
+  // Draw the floor.
+  for (int col = 0; col < COLS; col++)
+      mvaddch(LINES - 1, col, '#');
+  refresh();
+
+  // Wait a bit.
+  auto delay_time = chrono::seconds(3);
+  this_thread::sleep_for(delay_time);
+
+  // Clean up.
   endwin();
   return 0;
 }

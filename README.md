@@ -6,6 +6,9 @@ We chose C++ and `ncurses` because we were using them in the
 course, and they were a good match to our design. Most of us
 are pretty familiar with C++.
 
+Inspired by the Google built-in Chrome browser game
+"Dinosaur Runner".
+
 Sample screenshot:
 
      O
