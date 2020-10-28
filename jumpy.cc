@@ -4,16 +4,33 @@
 
 #include <chrono>
 #include <thread>
+#include <vector>
 
 #include <ncurses.h>
 
 using namespace std;
 
 // Draw the floor.
-void draw_floor(void) {
-  for (int col = 0; col < COLS; col++)
-      mvaddch(LINES - 1, col, '#');
-}
+class Floor {
+    vector<char> tiles;
+public:
+    Floor() {
+        for (int i = 0; i < COLS; i++)
+            tiles.push_back('#');
+    }
+
+    // Draw the current floor.
+    void draw(void) {
+        for (int col = 0; col < COLS; col++)
+            mvaddch(LINES - 1, col, tiles[col]);
+    }
+
+    void update(void) {
+        for (int col = 0; col < COLS - 1; col++)
+            tiles[col] = tiles[col + 1];
+        tiles[COLS - 1] = '#';
+    }
+};
 
 int main() {
   // Set up ncurses.
@@ -23,8 +40,16 @@ int main() {
   cbreak();
   keypad(stdscr, true);
 
+  // Initialize game state.
+  auto floor = Floor();
+
+  // Game loop.
   while (true) {
-      draw_floor();
+      // Update the current game state.
+      floor.update();
+
+      // Show the current game state.
+      floor.draw();
       refresh();
 
       // Wait a bit.
