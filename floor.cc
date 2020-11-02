@@ -1,6 +1,7 @@
 #include <ncurses.h>
 
 #include "floor.h"
+#include "gamestate.h"
 
 Floor::Floor() {
     for (int i = 0; i < COLS; i++)
@@ -15,6 +16,10 @@ void Floor::draw(void) {
 
 // Returns true on game over.
 bool Floor::update(GameState &state) {
+    // Update only on even ticks.
+    if (state.tick % 2 == 0)
+        return false;
+
     for (int col = 0; col < COLS - 1; col++)
         tiles[col] = tiles[col + 1];
     static uniform_real_distribution<float> distribution;
