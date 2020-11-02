@@ -4,8 +4,6 @@
 #include "floor.h"
 #include "jumpy.h"
 
-using namespace std;
-
 class GameState {
 public:
     Floor floor;
