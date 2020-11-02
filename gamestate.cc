@@ -3,7 +3,9 @@
 bool GameState::update() {
     if (floor.update(*this))
         return true;
-    return jumpy.update(*this);
+    auto jump = jumpy.update(*this);
+    this->tick++;
+    return jump;
 }
 
 void GameState::draw() {

@@ -3,6 +3,7 @@
 // In-class Game Jam 2020: Theme "cursed"
 
 #include <chrono>
+#include <cstdint>
 #include <random>
 #include <string>
 #include <thread>
