@@ -21,8 +21,8 @@ Sample screenshot:
 Jumpy can jump to avoid holes in the playfield. Things to
 improve:
 
-* [ ] Slow game to reasonable rate
-* [ ] Variable game speed
+* [x] Slow game to reasonable rate
+* [x] Variable game speed
 * [ ] Variable hole probability
 * [ ] Multi-space holes
 * [ ] Enemies to jump

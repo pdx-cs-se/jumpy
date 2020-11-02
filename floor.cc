@@ -1,3 +1,4 @@
+#include <cassert>
 #include <ncurses.h>
 
 #include "floor.h"
@@ -16,17 +17,31 @@ void Floor::draw(void) {
 
 // Returns true on game over.
 bool Floor::update(GameState &state) {
-    // Update only on even ticks.
-    if (state.tick % 2 == 0)
+    // Update floor rate and accel; check for
+    // move.
+    this->floor_shift += this->floor_rate;
+    this->floor_rate += FLOOR_ACCEL;
+    if (this->floor_shift < 1.0)
         return false;
 
-    for (int col = 0; col < COLS - 1; col++)
-        tiles[col] = tiles[col + 1];
-    static uniform_real_distribution<float> distribution;
-    if (distribution(generator) <= hole_prob)
-        tiles[COLS - 1] = ' ';
-    else
-        tiles[COLS - 1] = floor_tile();
+    // Find the integer part of the floor shift and adjust
+    // it.
+    int int_shift = floor(floor_shift);
+    assert(int_shift > 0);
+    this->floor_shift -= int_shift;
+
+    // Shift the floor.
+    for (; int_shift > 0; --int_shift) {
+        // XXX For better performance, move this copy out of
+        // the loop.
+        for (int col = 0; col < COLS - 1; col++)
+            tiles[col] = tiles[col + 1];
+        static uniform_real_distribution<float> distribution;
+        if (distribution(generator) <= hole_prob)
+            tiles[COLS - 1] = ' ';
+        else
+            tiles[COLS - 1] = floor_tile();
+    }
     return false;
 }
 
