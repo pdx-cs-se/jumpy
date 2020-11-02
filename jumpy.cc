@@ -15,7 +15,6 @@ void Jumpy::draw(void) {
 }
 
 // Returns true on game over.
-// XXX Needs more principled state sharing.
 bool Jumpy::update(GameState &state) {
     pos_y += vel_y;
     if (pos_y <= 1.0) {
@@ -31,6 +30,7 @@ bool Jumpy::update(GameState &state) {
     return false;
 }
 
+// Start a fresh jump.
 void Jumpy::jump(void) {
     // No double jumps.
     // XXX Should let clipping take care of this.
